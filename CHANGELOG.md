@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2-alpha.1](https://github.com/credat/credat-mcp/compare/v0.1.1-alpha.1...v0.1.2-alpha.1) (2026-03-19)
+
+
+### Bug Fixes
+
+* add --access public to npm publish for scoped package ([c205247](https://github.com/credat/credat-mcp/commit/c205247d1c3e51a67e5156933a6a0367d6fc7a26))
+
 ## [0.1.1-alpha.1](https://github.com/credat/credat-mcp/compare/v0.1.0-alpha.1...v0.1.1-alpha.1) (2026-03-19)
 
 
