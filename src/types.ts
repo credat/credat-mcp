@@ -1,4 +1,4 @@
-import type { DelegationConstraints, DelegationResult } from "credat";
+import type { DelegationConstraints, DelegationResult } from "@credat/sdk";
 
 // ── Constraint Types (defined locally — not yet exported by credat npm) ──
 
@@ -34,7 +34,7 @@ export interface CredatAuthOptions {
 	/** Max age for authenticated sessions. Default: 3_600_000 (1 hour) */
 	sessionMaxAgeMs?: number;
 
-	/** Tool name prefix. Default: "credat" → tools become "credat:challenge", "credat:authenticate" */
+	/** Tool name prefix. Default: "@credat/sdk" → tools become "credat:challenge", "credat:authenticate" */
 	toolPrefix?: string;
 }
 
@@ -75,7 +75,7 @@ export interface SessionAuth {
 }
 
 export interface StoredChallenge {
-	challenge: import("credat").ChallengeMessage;
+	challenge: import("@credat/sdk").ChallengeMessage;
 	sessionId: string;
 	createdAt: number;
 }

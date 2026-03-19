@@ -1,5 +1,5 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { createChallenge } from "credat";
+import { createChallenge } from "@credat/sdk";
 import type { ChallengeStore } from "../session.js";
 import type { ToolExtra } from "../types.js";
 

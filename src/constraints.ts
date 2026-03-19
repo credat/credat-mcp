@@ -1,4 +1,4 @@
-import type { DelegationConstraints } from "credat";
+import type { DelegationConstraints } from "@credat/sdk";
 import type { ConstraintContext, ConstraintViolation } from "./types.js";
 
 export function validateConstraints(

@@ -1,6 +1,6 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import type { PresentationMessage } from "credat";
-import { verifyPresentation } from "credat";
+import type { PresentationMessage } from "@credat/sdk";
+import { verifyPresentation } from "@credat/sdk";
 import { authError, McpAuthErrorCodes } from "../errors.js";
 import type { ChallengeStore, SessionStore } from "../session.js";
 import type { CredatAuthOptions, ToolExtra } from "../types.js";

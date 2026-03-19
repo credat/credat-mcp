@@ -21,8 +21,8 @@ import {
 	generateKeyPair,
 	presentCredentials,
 	uint8ArrayToBase64url,
-} from "credat";
-import type { ChallengeMessage } from "credat";
+} from "@credat/sdk";
+import type { ChallengeMessage } from "@credat/sdk";
 
 async function main() {
 	// ── Step 1: Set up identities ──

@@ -62,7 +62,7 @@ server.registerTool('read-emails', { ... },
 ## Install
 
 ```bash
-npm install @credat/mcp credat @modelcontextprotocol/sdk
+npm install @credat/mcp @credat/sdk @modelcontextprotocol/sdk
 ```
 
 ## How It Works
@@ -102,7 +102,7 @@ All using standard cryptography (ES256/EdDSA), DIDs, and SD-JWT Verifiable Crede
 ```typescript
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import { base64urlToUint8Array } from 'credat'
+import { base64urlToUint8Array } from '@credat/sdk'
 import { z } from 'zod'
 import { CredatAuth } from '@credat/mcp'
 
@@ -140,8 +140,8 @@ await server.connect(transport)
 
 ```typescript
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { presentCredentials } from 'credat'
-import type { ChallengeMessage } from 'credat'
+import { presentCredentials } from '@credat/sdk'
+import type { ChallengeMessage } from '@credat/sdk'
 
 // After connecting to the MCP server...
 

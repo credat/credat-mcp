@@ -1,5 +1,5 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { hasAllScopes, hasAnyScope } from "credat";
+import { hasAllScopes, hasAnyScope } from "@credat/sdk";
 import { validateConstraints } from "./constraints.js";
 import { authError, constraintError, McpAuthErrorCodes, scopeError } from "./errors.js";
 import type { SessionStore } from "./session.js";

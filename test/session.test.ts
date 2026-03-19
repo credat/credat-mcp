@@ -1,4 +1,4 @@
-import { createChallenge } from "credat";
+import { createChallenge } from "@credat/sdk";
 import { describe, expect, it } from "vitest";
 import { ChallengeStore, SessionStore } from "../src/session.js";
 import type { SessionAuth } from "../src/types.js";

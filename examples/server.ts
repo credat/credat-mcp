@@ -11,7 +11,7 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { base64urlToUint8Array } from "credat";
+import { base64urlToUint8Array } from "@credat/sdk";
 import { z } from "zod";
 import { CredatAuth } from "../src/index.js";
 

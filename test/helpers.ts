@@ -4,14 +4,14 @@ import {
 	delegate,
 	generateKeyPair,
 	presentCredentials,
-} from "credat";
+} from "@credat/sdk";
 import type {
 	AgentIdentity,
 	ChallengeMessage,
 	DelegationCredential,
 	KeyPair,
 	PresentationMessage,
-} from "credat";
+} from "@credat/sdk";
 import type { ToolExtra } from "../src/types.js";
 
 export interface TestSetup {

@@ -1,6 +1,6 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { createChallenge, generateKeyPair, presentCredentials } from "credat";
-import type { ChallengeMessage, PresentationMessage } from "credat";
+import { createChallenge, generateKeyPair, presentCredentials } from "@credat/sdk";
+import type { ChallengeMessage, PresentationMessage } from "@credat/sdk";
 import { describe, expect, it } from "vitest";
 import { CredatAuth } from "../src/auth.js";
 import { McpAuthErrorCodes } from "../src/errors.js";

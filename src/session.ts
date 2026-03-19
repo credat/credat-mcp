@@ -1,4 +1,4 @@
-import type { ChallengeMessage } from "credat";
+import type { ChallengeMessage } from "@credat/sdk";
 import type { SessionAuth, StoredChallenge } from "./types.js";
 
 const DEFAULT_MAX_SIZE = 1000;
