@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0-alpha.1](https://github.com/credat/credat-mcp/compare/v0.1.2-alpha.1...v0.2.0-alpha.1) (2026-03-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* peer dependency changed from credat to @credat/sdk
+
+### Features
+
+* migrate from credat to @credat/sdk ([fd07b17](https://github.com/credat/credat-mcp/commit/fd07b178b181dcd228e58d1579c77fef9740a075))
+
 ## [0.1.2-alpha.1](https://github.com/credat/credat-mcp/compare/v0.1.1-alpha.1...v0.1.2-alpha.1) (2026-03-19)
 
 
