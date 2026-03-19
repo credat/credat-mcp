@@ -1,6 +1,5 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import type { ConstraintViolation } from "credat";
-import type { AuthErrorPayload } from "./types.js";
+import type { AuthErrorPayload, ConstraintViolation } from "./types.js";
 
 // ── Error Codes ──
 

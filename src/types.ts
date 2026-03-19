@@ -1,9 +1,17 @@
-import type {
-	ConstraintContext,
-	ConstraintViolation,
-	DelegationConstraints,
-	DelegationResult,
-} from "credat";
+import type { DelegationConstraints, DelegationResult } from "credat";
+
+// ── Constraint Types (defined locally — not yet exported by credat npm) ──
+
+export interface ConstraintContext {
+	transactionValue?: number;
+	domain?: string;
+	[key: string]: unknown;
+}
+
+export interface ConstraintViolation {
+	constraint: string;
+	message: string;
+}
 
 // ── Configuration ──
 
@@ -91,4 +99,4 @@ export interface ToolExtra {
 	[key: string]: unknown;
 }
 
-export type { ConstraintContext, ConstraintViolation, DelegationResult };
+export type { DelegationConstraints, DelegationResult };

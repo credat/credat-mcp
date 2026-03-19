@@ -61,7 +61,7 @@
     "node": ">=22.0.0"
   },
   "peerDependencies": {
-    "credat": "^0.2.0",
+    "credat": "^0.2.0-alpha.1",
     "@modelcontextprotocol/sdk": "^1.27.0",
     "zod": "^3.25.0"
   },
@@ -69,7 +69,7 @@
     "@biomejs/biome": "^2.4.0",
     "@modelcontextprotocol/sdk": "^1.27.0",
     "@types/node": "^22.0.0",
-    "credat": "file:../credat",
+    "credat": "^0.2.0-alpha.1",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",

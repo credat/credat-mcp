@@ -1,5 +1,6 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { hasAllScopes, hasAnyScope, validateConstraints } from "credat";
+import { hasAllScopes, hasAnyScope } from "credat";
+import { validateConstraints } from "./constraints.js";
 import {
 	McpAuthErrorCodes,
 	authError,
