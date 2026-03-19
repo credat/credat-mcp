@@ -9,10 +9,7 @@ export function validateConstraints(
 
 	const violations: ConstraintViolation[] = [];
 
-	if (
-		constraints.maxTransactionValue != null &&
-		context.transactionValue != null
-	) {
+	if (constraints.maxTransactionValue != null && context.transactionValue != null) {
 		if (context.transactionValue > constraints.maxTransactionValue) {
 			violations.push({
 				constraint: "maxTransactionValue",
@@ -30,10 +27,7 @@ export function validateConstraints(
 		}
 	}
 
-	if (
-		constraints.rateLimit != null &&
-		typeof context.rateLimit === "number"
-	) {
+	if (constraints.rateLimit != null && typeof context.rateLimit === "number") {
 		if (context.rateLimit > constraints.rateLimit) {
 			violations.push({
 				constraint: "rateLimit",

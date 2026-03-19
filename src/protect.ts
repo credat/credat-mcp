@@ -1,12 +1,7 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { hasAllScopes, hasAnyScope } from "credat";
 import { validateConstraints } from "./constraints.js";
-import {
-	McpAuthErrorCodes,
-	authError,
-	constraintError,
-	scopeError,
-} from "./errors.js";
+import { authError, constraintError, McpAuthErrorCodes, scopeError } from "./errors.js";
 import type { SessionStore } from "./session.js";
 import type { AuthContext, ProtectOptions, ToolExtra } from "./types.js";
 
@@ -59,15 +54,10 @@ export function createProtect(sessionStore: SessionStore) {
 			if (options.constraintContext) {
 				const context =
 					typeof options.constraintContext === "function"
-						? options.constraintContext(
-								args as Record<string, unknown>,
-							)
+						? options.constraintContext(args as Record<string, unknown>)
 						: options.constraintContext;
 
-				const violations = validateConstraints(
-					delegationResult.constraints,
-					context,
-				);
+				const violations = validateConstraints(delegationResult.constraints, context);
 				if (violations.length > 0) {
 					return constraintError(violations);
 				}

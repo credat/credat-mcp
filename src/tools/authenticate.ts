@@ -1,7 +1,7 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { PresentationMessage } from "credat";
 import { verifyPresentation } from "credat";
-import { McpAuthErrorCodes, authError } from "../errors.js";
+import { authError, McpAuthErrorCodes } from "../errors.js";
 import type { ChallengeStore, SessionStore } from "../session.js";
 import type { CredatAuthOptions, ToolExtra } from "../types.js";
 
@@ -42,12 +42,9 @@ export function createAuthenticateHandler(
 			agentPublicKey = config.agentPublicKey;
 		} else if (config.resolveAgentKey) {
 			try {
-				agentPublicKey = await config.resolveAgentKey(
-					presentation.from,
-				);
+				agentPublicKey = await config.resolveAgentKey(presentation.from);
 			} catch (err) {
-				const message =
-					err instanceof Error ? err.message : "Unknown error";
+				const message = err instanceof Error ? err.message : "Unknown error";
 				return authError(
 					`Failed to resolve agent public key for ${presentation.from}: ${message}`,
 					McpAuthErrorCodes.CONFIGURATION_ERROR,
@@ -69,9 +66,7 @@ export function createAuthenticateHandler(
 		});
 
 		if (!result.valid) {
-			const details = result.errors.map(
-				(e) => `${e.code}: ${e.message}`,
-			);
+			const details = result.errors.map((e) => `${e.code}: ${e.message}`);
 			return authError(
 				"Authentication failed.",
 				result.errors[0]?.code ?? "HANDSHAKE_VERIFICATION_FAILED",

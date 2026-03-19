@@ -48,9 +48,7 @@ export interface ProtectOptions {
 	anyScope?: string[];
 
 	/** Constraint context for runtime constraint validation */
-	constraintContext?:
-		| ConstraintContext
-		| ((args: Record<string, unknown>) => ConstraintContext);
+	constraintContext?: ConstraintContext | ((args: Record<string, unknown>) => ConstraintContext);
 }
 
 // ── Auth Context ──

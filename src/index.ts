@@ -1,11 +1,11 @@
 export { CredatAuth } from "./auth.js";
+export type { McpAuthErrorCode } from "./errors.js";
 export {
-	McpAuthErrorCodes,
 	authError,
 	constraintError,
+	McpAuthErrorCodes,
 	scopeError,
 } from "./errors.js";
-export type { McpAuthErrorCode } from "./errors.js";
 export { ChallengeStore, SessionStore } from "./session.js";
 export type {
 	AuthContext,

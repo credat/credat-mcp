@@ -5,10 +5,7 @@ import type { ToolExtra } from "../types.js";
 
 const STDIO_SESSION_KEY = "__stdio__";
 
-export function createChallengeHandler(
-	serverDid: string,
-	challengeStore: ChallengeStore,
-) {
+export function createChallengeHandler(serverDid: string, challengeStore: ChallengeStore) {
 	return (extra: ToolExtra): CallToolResult => {
 		const challenge = createChallenge({ from: serverDid });
 		const sessionId = extra.sessionId ?? STDIO_SESSION_KEY;

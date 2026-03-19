@@ -28,11 +28,7 @@ export class CredatAuth {
 	private readonly config: Required<
 		Pick<
 			CredatAuthOptions,
-			| "serverDid"
-			| "ownerPublicKey"
-			| "challengeMaxAgeMs"
-			| "sessionMaxAgeMs"
-			| "toolPrefix"
+			"serverDid" | "ownerPublicKey" | "challengeMaxAgeMs" | "sessionMaxAgeMs" | "toolPrefix"
 		>
 	> &
 		Pick<CredatAuthOptions, "agentPublicKey" | "resolveAgentKey">;
@@ -54,10 +50,8 @@ export class CredatAuth {
 			ownerPublicKey: options.ownerPublicKey,
 			agentPublicKey: options.agentPublicKey,
 			resolveAgentKey: options.resolveAgentKey,
-			challengeMaxAgeMs:
-				options.challengeMaxAgeMs ?? DEFAULT_CHALLENGE_MAX_AGE_MS,
-			sessionMaxAgeMs:
-				options.sessionMaxAgeMs ?? DEFAULT_SESSION_MAX_AGE_MS,
+			challengeMaxAgeMs: options.challengeMaxAgeMs ?? DEFAULT_CHALLENGE_MAX_AGE_MS,
+			sessionMaxAgeMs: options.sessionMaxAgeMs ?? DEFAULT_SESSION_MAX_AGE_MS,
 			toolPrefix: options.toolPrefix ?? DEFAULT_TOOL_PREFIX,
 		};
 
@@ -70,10 +64,7 @@ export class CredatAuth {
 	install(server: McpServer): void {
 		const prefix = this.config.toolPrefix;
 
-		const challengeHandler = createChallengeHandler(
-			this.config.serverDid,
-			this.challengeStore,
-		);
+		const challengeHandler = createChallengeHandler(this.config.serverDid, this.challengeStore);
 
 		const authenticateHandler = createAuthenticateHandler(
 			this.config,

@@ -17,11 +17,7 @@ export class ChallengeStore {
 		this.maxSize = maxSize;
 	}
 
-	set(
-		nonce: string,
-		challenge: ChallengeMessage,
-		sessionId: string,
-	): void {
+	set(nonce: string, challenge: ChallengeMessage, sessionId: string): void {
 		this.store.set(nonce, {
 			challenge,
 			sessionId,
@@ -29,10 +25,7 @@ export class ChallengeStore {
 		});
 
 		this.insertsSinceCleanup++;
-		if (
-			this.insertsSinceCleanup >= CLEANUP_THRESHOLD ||
-			this.store.size > this.maxSize
-		) {
+		if (this.insertsSinceCleanup >= CLEANUP_THRESHOLD || this.store.size > this.maxSize) {
 			this.cleanup();
 			this.insertsSinceCleanup = 0;
 		}
@@ -62,13 +55,8 @@ export class ChallengeStore {
 
 		// Evict oldest if still over max size
 		if (this.store.size > this.maxSize) {
-			const entries = [...this.store.entries()].sort(
-				(a, b) => a[1].createdAt - b[1].createdAt,
-			);
-			const toRemove = entries.slice(
-				0,
-				this.store.size - this.maxSize,
-			);
+			const entries = [...this.store.entries()].sort((a, b) => a[1].createdAt - b[1].createdAt);
+			const toRemove = entries.slice(0, this.store.size - this.maxSize);
 			for (const [nonce] of toRemove) {
 				this.store.delete(nonce);
 			}

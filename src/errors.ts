@@ -12,16 +12,11 @@ export const McpAuthErrorCodes = {
 	CONFIGURATION_ERROR: "CONFIGURATION_ERROR",
 } as const;
 
-export type McpAuthErrorCode =
-	(typeof McpAuthErrorCodes)[keyof typeof McpAuthErrorCodes];
+export type McpAuthErrorCode = (typeof McpAuthErrorCodes)[keyof typeof McpAuthErrorCodes];
 
 // ── Error Response Builders ──
 
-export function authError(
-	message: string,
-	code: string,
-	details?: string[],
-): CallToolResult {
+export function authError(message: string, code: string, details?: string[]): CallToolResult {
 	const payload: AuthErrorPayload = { error: message, code };
 	if (details && details.length > 0) {
 		payload.details = details;
@@ -32,10 +27,7 @@ export function authError(
 	};
 }
 
-export function scopeError(
-	required: string[],
-	actual: string[],
-): CallToolResult {
+export function scopeError(required: string[], actual: string[]): CallToolResult {
 	const missing = required.filter((s) => !actual.includes(s));
 	return authError(
 		`Insufficient scopes. Missing: ${missing.join(", ")}`,
@@ -44,9 +36,7 @@ export function scopeError(
 	);
 }
 
-export function constraintError(
-	violations: ConstraintViolation[],
-): CallToolResult {
+export function constraintError(violations: ConstraintViolation[]): CallToolResult {
 	return authError(
 		`Constraint violation: ${violations.map((v) => v.message).join("; ")}`,
 		McpAuthErrorCodes.CONSTRAINT_VIOLATION,
