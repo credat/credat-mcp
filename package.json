@@ -1,6 +1,6 @@
 {
   "name": "@credat/mcp",
-  "version": "0.2.0-alpha.1",
+  "version": "0.3.0-alpha.1",
   "description": "Trust & authentication layer for MCP servers — verify agent identity, delegated permissions, and scopes using Credat",
   "type": "module",
   "main": "./dist/index.cjs",
