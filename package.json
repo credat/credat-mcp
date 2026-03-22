@@ -16,6 +16,16 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
+    },
+    "./sqlite": {
+      "import": {
+        "types": "./dist/sqlite.d.ts",
+        "default": "./dist/sqlite.js"
+      },
+      "require": {
+        "types": "./dist/sqlite.d.cts",
+        "default": "./dist/sqlite.cjs"
+      }
     }
   },
   "files": [
@@ -63,13 +73,21 @@
   "peerDependencies": {
     "@credat/sdk": "^0.3.0-alpha.1",
     "@modelcontextprotocol/sdk": "^1.27.0",
+    "better-sqlite3": "^11.0.0 || ^12.0.0",
     "zod": "^3.25.0"
+  },
+  "peerDependenciesMeta": {
+    "better-sqlite3": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.0",
     "@credat/sdk": "^0.3.0-alpha.1",
     "@modelcontextprotocol/sdk": "^1.27.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.0.0",
+    "better-sqlite3": "^12.8.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",

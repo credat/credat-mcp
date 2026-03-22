@@ -7,7 +7,10 @@ import { createAuthenticateHandler } from "./tools/authenticate.js";
 import { createChallengeHandler } from "./tools/challenge.js";
 import type {
 	AuthContext,
+	CredatAuthHooks,
 	CredatAuthOptions,
+	IChallengeStore,
+	ISessionStore,
 	ProtectOptions,
 	SessionAuth,
 	ToolExtra,
@@ -33,8 +36,9 @@ export class CredatAuth {
 	> &
 		Pick<CredatAuthOptions, "agentPublicKey" | "resolveAgentKey">;
 
-	private readonly challengeStore: ChallengeStore;
-	private readonly sessionStore: SessionStore;
+	private readonly hooks?: CredatAuthHooks;
+	private readonly challengeStore: IChallengeStore;
+	private readonly sessionStore: ISessionStore;
 	private readonly protectFn: ReturnType<typeof createProtect>;
 
 	constructor(options: CredatAuthOptions) {
@@ -55,21 +59,28 @@ export class CredatAuth {
 			toolPrefix: options.toolPrefix ?? DEFAULT_TOOL_PREFIX,
 		};
 
-		this.challengeStore = new ChallengeStore(this.config.challengeMaxAgeMs);
-		this.sessionStore = new SessionStore(this.config.sessionMaxAgeMs);
-		this.protectFn = createProtect(this.sessionStore);
+		this.hooks = options.hooks;
+		this.challengeStore =
+			options.challengeStore ?? new ChallengeStore(this.config.challengeMaxAgeMs);
+		this.sessionStore = options.sessionStore ?? new SessionStore(this.config.sessionMaxAgeMs);
+		this.protectFn = createProtect(this.sessionStore, this.hooks);
 	}
 
 	/** Register the credat:challenge and credat:authenticate tools on the server */
 	install(server: McpServer): void {
 		const prefix = this.config.toolPrefix;
 
-		const challengeHandler = createChallengeHandler(this.config.serverDid, this.challengeStore);
+		const challengeHandler = createChallengeHandler(
+			this.config.serverDid,
+			this.challengeStore,
+			this.hooks,
+		);
 
 		const authenticateHandler = createAuthenticateHandler(
 			this.config,
 			this.challengeStore,
 			this.sessionStore,
+			this.hooks,
 		);
 
 		// Register challenge tool (no input — callback receives just extra)
@@ -123,20 +134,21 @@ export class CredatAuth {
 	}
 
 	/** Check if a session is currently authenticated */
-	isAuthenticated(sessionId?: string): boolean {
+	async isAuthenticated(sessionId?: string): Promise<boolean> {
 		const key = sessionId ?? STDIO_SESSION_KEY;
-		return this.sessionStore.get(key) !== undefined;
+		return (await this.sessionStore.get(key)) !== undefined;
 	}
 
 	/** Get the auth result for a session */
-	getSessionAuth(sessionId?: string): SessionAuth | undefined {
+	async getSessionAuth(sessionId?: string): Promise<SessionAuth | undefined> {
 		const key = sessionId ?? STDIO_SESSION_KEY;
 		return this.sessionStore.get(key);
 	}
 
 	/** Revoke a session, forcing re-authentication */
-	revokeSession(sessionId?: string): void {
+	async revokeSession(sessionId?: string): Promise<void> {
 		const key = sessionId ?? STDIO_SESSION_KEY;
-		this.sessionStore.delete(key);
+		await this.sessionStore.delete(key);
+		this.hooks?.onSessionRevoked?.({ sessionId: key, timestamp: Date.now() });
 	}
 }

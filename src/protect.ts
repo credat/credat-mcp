@@ -1,9 +1,14 @@
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { hasAllScopes, hasAnyScope } from "@credat/sdk";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { validateConstraints } from "./constraints.js";
 import { authError, constraintError, McpAuthErrorCodes, scopeError } from "./errors.js";
-import type { SessionStore } from "./session.js";
-import type { AuthContext, ProtectOptions, ToolExtra } from "./types.js";
+import type {
+	AuthContext,
+	CredatAuthHooks,
+	ISessionStore,
+	ProtectOptions,
+	ToolExtra,
+} from "./types.js";
 
 const STDIO_SESSION_KEY = "__stdio__";
 
@@ -12,26 +17,27 @@ type ProtectedHandler<TArgs> = (
 	extra: ToolExtra & { auth: AuthContext },
 ) => CallToolResult | Promise<CallToolResult>;
 
-type ToolHandler<TArgs> = (
-	args: TArgs,
-	extra: ToolExtra,
-) => CallToolResult | Promise<CallToolResult>;
+type ToolHandler<TArgs> = (args: TArgs, extra: ToolExtra) => Promise<CallToolResult>;
 
-export function createProtect(sessionStore: SessionStore) {
+export function createProtect(sessionStore: ISessionStore, hooks?: CredatAuthHooks) {
 	return function protect<TArgs extends Record<string, unknown>>(
 		options: ProtectOptions,
 		handler: ProtectedHandler<TArgs>,
 	): ToolHandler<TArgs> {
-		return (args: TArgs, extra: ToolExtra) => {
+		return async (args: TArgs, extra: ToolExtra) => {
 			const sessionId = extra.sessionId ?? STDIO_SESSION_KEY;
 
 			// 1. Check authentication
-			const session = sessionStore.get(sessionId);
+			const session = await sessionStore.get(sessionId);
 			if (!session) {
-				return authError(
-					"Not authenticated. Call the credat:challenge tool to begin authentication.",
-					McpAuthErrorCodes.NOT_AUTHENTICATED,
-				);
+				const reason = "Not authenticated. Call the credat:challenge tool to begin authentication.";
+				hooks?.onAccessDenied?.({
+					sessionId,
+					code: McpAuthErrorCodes.NOT_AUTHENTICATED,
+					reason,
+					timestamp: Date.now(),
+				});
+				return authError(reason, McpAuthErrorCodes.NOT_AUTHENTICATED);
 			}
 
 			const { delegationResult } = session;
@@ -39,6 +45,16 @@ export function createProtect(sessionStore: SessionStore) {
 			// 2. Check required scopes (ALL)
 			if (options.scopes && options.scopes.length > 0) {
 				if (!hasAllScopes(delegationResult, options.scopes)) {
+					const missing = options.scopes.filter((s) => !delegationResult.scopes.includes(s));
+					hooks?.onAccessDenied?.({
+						sessionId,
+						code: McpAuthErrorCodes.INSUFFICIENT_SCOPES,
+						reason: `Missing scopes: ${missing.join(", ")}`,
+						agentDid: delegationResult.agent,
+						requiredScopes: options.scopes,
+						grantedScopes: delegationResult.scopes,
+						timestamp: Date.now(),
+					});
 					return scopeError(options.scopes, delegationResult.scopes);
 				}
 			}
@@ -46,6 +62,15 @@ export function createProtect(sessionStore: SessionStore) {
 			// 3. Check required scopes (ANY)
 			if (options.anyScope && options.anyScope.length > 0) {
 				if (!hasAnyScope(delegationResult, options.anyScope)) {
+					hooks?.onAccessDenied?.({
+						sessionId,
+						code: McpAuthErrorCodes.INSUFFICIENT_SCOPES,
+						reason: `None of required scopes matched: ${options.anyScope.join(", ")}`,
+						agentDid: delegationResult.agent,
+						requiredScopes: options.anyScope,
+						grantedScopes: delegationResult.scopes,
+						timestamp: Date.now(),
+					});
 					return scopeError(options.anyScope, delegationResult.scopes);
 				}
 			}
@@ -59,6 +84,14 @@ export function createProtect(sessionStore: SessionStore) {
 
 				const violations = validateConstraints(delegationResult.constraints, context);
 				if (violations.length > 0) {
+					hooks?.onAccessDenied?.({
+						sessionId,
+						code: McpAuthErrorCodes.CONSTRAINT_VIOLATION,
+						reason: violations.map((v) => v.message).join("; "),
+						agentDid: delegationResult.agent,
+						violations,
+						timestamp: Date.now(),
+					});
 					return constraintError(violations);
 				}
 			}

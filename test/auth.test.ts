@@ -77,7 +77,7 @@ describe("CredatAuth", () => {
 
 		// Step 1: Request challenge
 		const challengeTool = server.registeredTools.get("credat:challenge")!;
-		const challengeResult = challengeTool.callback(extra) as CallToolResult;
+		const challengeResult = (await challengeTool.callback(extra)) as CallToolResult;
 		const challenge: ChallengeMessage = parseResult(challengeResult) as unknown as ChallengeMessage;
 		expect(challenge.type).toBe("credat:challenge");
 		expect(challenge.nonce).toBeDefined();
@@ -131,7 +131,7 @@ describe("CredatAuth", () => {
 
 		// Get challenge
 		const challengeTool = server.registeredTools.get("credat:challenge")!;
-		const challengeResult = challengeTool.callback(extra) as CallToolResult;
+		const challengeResult = (await challengeTool.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 
 		const presentation = await performHandshake(challenge, setup);
@@ -171,7 +171,7 @@ describe("CredatAuth", () => {
 		const extra = createMockExtra();
 
 		const challengeTool = server.registeredTools.get("credat:challenge")!;
-		const challengeResult = challengeTool.callback(extra) as CallToolResult;
+		const challengeResult = (await challengeTool.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 
 		const presentation = await performHandshake(challenge, setup);
@@ -201,9 +201,9 @@ describe("CredatAuth", () => {
 		const extra = createMockExtra();
 
 		// Authenticate
-		const challengeResult = server.registeredTools
+		const challengeResult = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extra) as CallToolResult;
+			.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 		await server.registeredTools
@@ -257,9 +257,9 @@ describe("CredatAuth", () => {
 
 		const extra = createMockExtra();
 
-		const challengeResult = server.registeredTools
+		const challengeResult = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extra) as CallToolResult;
+			.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 
@@ -290,9 +290,9 @@ describe("CredatAuth", () => {
 
 		const extra = createMockExtra();
 
-		const challengeResult = server.registeredTools
+		const challengeResult = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extra) as CallToolResult;
+			.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 
@@ -318,9 +318,9 @@ describe("CredatAuth", () => {
 
 		// Authenticate on session-A
 		const extraA = createMockExtra("session-A");
-		const challengeA = server.registeredTools
+		const challengeA = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extraA) as CallToolResult;
+			.callback(extraA)) as CallToolResult;
 		const challenge = parseResult(challengeA) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 		await server.registeredTools
@@ -328,10 +328,10 @@ describe("CredatAuth", () => {
 			.callback({ presentation }, extraA);
 
 		// Session-A should be authenticated
-		expect(auth.isAuthenticated("session-A")).toBe(true);
+		expect(await auth.isAuthenticated("session-A")).toBe(true);
 
 		// Session-B should NOT be authenticated
-		expect(auth.isAuthenticated("session-B")).toBe(false);
+		expect(await auth.isAuthenticated("session-B")).toBe(false);
 
 		const protectedHandler = auth.protect({}, (_args: Record<string, unknown>) => ({
 			content: [{ type: "text" as const, text: "ok" }],
@@ -359,9 +359,9 @@ describe("CredatAuth", () => {
 		const extra = createMockExtra();
 
 		// Authenticate
-		const challengeResult = server.registeredTools
+		const challengeResult = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extra) as CallToolResult;
+			.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 		await server.registeredTools
@@ -369,13 +369,13 @@ describe("CredatAuth", () => {
 			.callback({ presentation }, extra);
 
 		// Should be authenticated now
-		expect(auth.isAuthenticated()).toBe(true);
+		expect(await auth.isAuthenticated()).toBe(true);
 
 		// Wait for session to expire
 		await new Promise((r) => setTimeout(r, 150));
 
 		// Should no longer be authenticated
-		expect(auth.isAuthenticated()).toBe(false);
+		expect(await auth.isAuthenticated()).toBe(false);
 	});
 
 	it("revokeSession forces re-authentication", async () => {
@@ -392,21 +392,21 @@ describe("CredatAuth", () => {
 		const extra = createMockExtra();
 
 		// Authenticate
-		const challengeResult = server.registeredTools
+		const challengeResult = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extra) as CallToolResult;
+			.callback(extra)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 		await server.registeredTools
 			.get("credat:authenticate")!
 			.callback({ presentation }, extra);
 
-		expect(auth.isAuthenticated()).toBe(true);
+		expect(await auth.isAuthenticated()).toBe(true);
 
 		// Revoke
-		auth.revokeSession();
+		await auth.revokeSession();
 
-		expect(auth.isAuthenticated()).toBe(false);
+		expect(await auth.isAuthenticated()).toBe(false);
 	});
 
 	it("rejects challenge from different session (session binding)", async () => {
@@ -422,9 +422,9 @@ describe("CredatAuth", () => {
 
 		// Request challenge from session-A
 		const extraA = createMockExtra("session-A");
-		const challengeResult = server.registeredTools
+		const challengeResult = (await server.registeredTools
 			.get("credat:challenge")!
-			.callback(extraA) as CallToolResult;
+			.callback(extraA)) as CallToolResult;
 		const challenge = parseResult(challengeResult) as unknown as ChallengeMessage;
 		const presentation = await performHandshake(challenge, setup);
 

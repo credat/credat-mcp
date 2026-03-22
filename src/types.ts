@@ -1,4 +1,21 @@
-import type { DelegationConstraints, DelegationResult } from "@credat/sdk";
+import type { ChallengeMessage, DelegationConstraints, DelegationResult } from "@credat/sdk";
+
+// ── Utility Types ──
+
+export type MaybePromise<T> = T | Promise<T>;
+
+// ── Store Interfaces ──
+
+export interface IChallengeStore {
+	set(nonce: string, challenge: ChallengeMessage, sessionId: string): MaybePromise<void>;
+	consume(nonce: string): MaybePromise<StoredChallenge | undefined>;
+}
+
+export interface ISessionStore {
+	set(sessionId: string, auth: SessionAuth): MaybePromise<void>;
+	get(sessionId: string): MaybePromise<SessionAuth | undefined>;
+	delete(sessionId: string): MaybePromise<boolean>;
+}
 
 // ── Constraint Types (defined locally — not yet exported by credat npm) ──
 
@@ -11,6 +28,59 @@ export interface ConstraintContext {
 export interface ConstraintViolation {
 	constraint: string;
 	message: string;
+}
+
+// ── Observability Hooks ──
+
+export interface ChallengeEvent {
+	sessionId: string;
+	nonce: string;
+	timestamp: number;
+}
+
+export interface AuthenticatedEvent {
+	sessionId: string;
+	agentDid: string;
+	ownerDid: string;
+	scopes: string[];
+	timestamp: number;
+}
+
+export interface AuthFailedEvent {
+	sessionId: string;
+	code: string;
+	reason: string;
+	agentDid?: string;
+	timestamp: number;
+}
+
+export interface AccessDeniedEvent {
+	sessionId: string;
+	code: string;
+	reason: string;
+	agentDid?: string;
+	requiredScopes?: string[];
+	grantedScopes?: string[];
+	violations?: ConstraintViolation[];
+	timestamp: number;
+}
+
+export interface SessionRevokedEvent {
+	sessionId: string;
+	timestamp: number;
+}
+
+export interface CredatAuthHooks {
+	/** Fired when a new challenge is issued */
+	onChallenge?: (event: ChallengeEvent) => void;
+	/** Fired when authentication succeeds */
+	onAuthenticated?: (event: AuthenticatedEvent) => void;
+	/** Fired when the authenticate handler rejects (bad nonce, session mismatch, verification failure) */
+	onAuthFailed?: (event: AuthFailedEvent) => void;
+	/** Fired when a protected tool rejects (not authenticated, wrong scopes, constraint violation) */
+	onAccessDenied?: (event: AccessDeniedEvent) => void;
+	/** Fired when a session is explicitly revoked */
+	onSessionRevoked?: (event: SessionRevokedEvent) => void;
 }
 
 // ── Configuration ──
@@ -36,6 +106,15 @@ export interface CredatAuthOptions {
 
 	/** Tool name prefix. Default: "@credat/sdk" → tools become "credat:challenge", "credat:authenticate" */
 	toolPrefix?: string;
+
+	/** Custom challenge store (default: in-memory ChallengeStore) */
+	challengeStore?: IChallengeStore;
+
+	/** Custom session store (default: in-memory SessionStore) */
+	sessionStore?: ISessionStore;
+
+	/** Observability hooks for auth events */
+	hooks?: CredatAuthHooks;
 }
 
 // ── Protection ──
@@ -97,4 +176,4 @@ export interface ToolExtra {
 	[key: string]: unknown;
 }
 
-export type { DelegationConstraints, DelegationResult };
+export type { ChallengeMessage, DelegationConstraints, DelegationResult };

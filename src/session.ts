@@ -1,12 +1,12 @@
 import type { ChallengeMessage } from "@credat/sdk";
-import type { SessionAuth, StoredChallenge } from "./types.js";
+import type { IChallengeStore, ISessionStore, SessionAuth, StoredChallenge } from "./types.js";
 
 const DEFAULT_MAX_SIZE = 1000;
 const CLEANUP_THRESHOLD = 100;
 
 // ── Challenge Store ──
 
-export class ChallengeStore {
+export class ChallengeStore implements IChallengeStore {
 	private store = new Map<string, StoredChallenge>();
 	private readonly maxAgeMs: number;
 	private readonly maxSize: number;
@@ -70,7 +70,7 @@ export class ChallengeStore {
 
 // ── Session Store ──
 
-export class SessionStore {
+export class SessionStore implements ISessionStore {
 	private store = new Map<string, SessionAuth>();
 	private readonly maxAgeMs: number;
 	private insertsSinceCleanup = 0;
