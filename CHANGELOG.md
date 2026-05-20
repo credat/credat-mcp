@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0-alpha.1](https://github.com/credat/credat-mcp/compare/v0.2.0-alpha.1...v0.3.0-alpha.1) (2026-03-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* `isAuthenticated()` and `getSessionAuth()` are now async (return Promise) to support async store backends.
+
+### Features
+
+* pluggable stores, SQLite backend, hooks, constraints, async APIs ([87f243e](https://github.com/credat/credat-mcp/commit/87f243e604d640856fb0ea3c27f16121e671e95d))
+
 ## [0.2.0-alpha.1](https://github.com/credat/credat-mcp/compare/v0.1.2-alpha.1...v0.2.0-alpha.1) (2026-03-19)
 
 
